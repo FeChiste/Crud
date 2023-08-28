@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="style.css">
+<link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body>
+    <h1>Cadastro de Produtos</h1>
+
+    <form id="productForm">
+        <label for="productName">Nome do Produto:</label>
+        <input type="text" id="productName" required><br>
+
+        <label for="productDescription">Descrição:</label>
+        <textarea id="productDescription" required></textarea><br>
+
+        <label for="productValue">Valor:</label>
+        <input type="number" id="productValue" step="0.01" required><br>
+
+        <button type="button" onclick="addProduct()">Cadastrar</button>
+    </form>
+
+    <h2>Lista de Produtos</h2>
+    <ul id="productList">
+
+    </ul>
+
+    <div id="editForm" style="display: none;">
+        <h2>Editar Produto</h2>
+        <form id="editProductForm">
+            <label for="editProductName">Nome do Produto:</label>
+            <input type="text" id="editProductName" required><br>
+
+            <label for="editProductDescription">Descrição:</label>
+            <textarea id="editProductDescription" required></textarea><br>
+
+            <label for="editProductValue">Valor:</label>
+            <input type="number" id="editProductValue" step="0.01" required><br>
+
+            <button type="button" onclick="updateProduct()">Salvar</button>
+        </form>
+    </div>
+
+    <script>
+        const productList = document.getElementById('productList');
+        const productForm = document.getElementById('productForm');
+        const editForm = document.getElementById('editForm');
+        const editProductName = document.getElementById('editProductName');
+        const editProductDescription = document.getElementById('editProductDescription');
+        const editProductValue = document.getElementById('editProductValue');
+
+        let editedLi = null;  // Armazena o <li> sendo editado
+
+        function addProduct() {
+            const productName = document.getElementById('productName').value;
+            const productDescription = document.getElementById('productDescription').value;
+            const productValue = document.getElementById('productValue').value;
+
+            if (productName.trim() !== '' && productDescription.trim() !== '' && productValue !== '') {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <strong>${productName}</strong><br>
+                    Descrição: ${productDescription}<br>
+                    Valor: R$ ${productValue}<br>
+                    <button onclick="editProduct(this)">Editar</button>
+                    <button onclick="deleteProduct(this)">Excluir</button>
+                `;
+                productList.appendChild(li);
+                productForm.reset();
+            }
+        }
+
+        function editProduct(button) {
+            const li = button.parentNode;
+            editedLi = li;
+
+            const productName = li.querySelector('strong').textContent;
+            const productDescription = li.childNodes[3].nodeValue.split('Descrição: ')[1];
+            const productValue = li.childNodes[5].nodeValue.split('Valor: R$ ')[1];
+
+            editProductName.value = productName;
+            editProductDescription.value = productDescription;
+            editProductValue.value = productValue;
+
+            editForm.style.display = 'block';
+        }
+
+        function updateProduct() {
+            const updatedName = editProductName.value;
+            const updatedDescription = editProductDescription.value;
+            const updatedValue = editProductValue.value;
+
+            editedLi.querySelector('strong').textContent = updatedName;
+            editedLi.childNodes[3].nodeValue = `Descrição: ${updatedDescription}`;
+            editedLi.childNodes[5].nodeValue = `Valor: R$ ${updatedValue}`;
+
+            editForm.style.display = 'none';
+            clearEditForm();
+        }
+
+        function clearEditForm() {
+            editProductName.value = '';
+            editProductDescription.value = '';
+            editProductValue.value = '';
+            editedLi = null;
+        }
+
+        function deleteProduct(button) {
+            const li = button.parentNode;
+            productList.removeChild(li);
+        }
+    </script>
+    <script src="script.js"></script>
+</body>
+
+</html>
+
+
+
